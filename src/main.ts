@@ -8,7 +8,7 @@ const pitchRangeElmt = document.getElementById('pitchRangeElmt') as HTMLInputEle
 const rollRangeElmt = document.getElementById('rollRangeElmt') as HTMLInputElement;
 const camHeightRangeElmt = document.getElementById('camHeightRangeElmt') as HTMLInputElement;
 const pitchDisplayElmt = document.getElementById('pitchDisplayElmt');
-const rollDisplayElmt = document.getElementById('pitchDisplayElmt');
+const rollDisplayElmt = document.getElementById('rollDisplayElmt');
 const heightDisplayElmt = document.getElementById('heightDisplayElmt');
 
 const ctx = canvasElmt.getContext('2d');
