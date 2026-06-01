@@ -1,5 +1,5 @@
 import './style.css';
-import { mat4, quat, vec2, vec3, vec4 } from 'gl-matrix';
+import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { Object3D, Cilinder, Camera } from './utils3D';
 
 const canvasElmt = document.getElementById('canvasElmt') as HTMLCanvasElement;
