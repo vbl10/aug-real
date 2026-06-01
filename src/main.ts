@@ -2,6 +2,7 @@ import './style.css';
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
 import { Object3D, Cilinder, Camera } from './utils3D';
 
+const canvasContainerElmt = document.getElementById('canvasContainerElmt') as HTMLDivElement;
 const canvasElmt = document.getElementById('canvasElmt') as HTMLCanvasElement;
 const pitchRangeElmt = document.getElementById('pitchRangeElmt') as HTMLInputElement;
 const rollRangeElmt = document.getElementById('rollRangeElmt') as HTMLInputElement;
@@ -9,6 +10,16 @@ const rollRangeElmt = document.getElementById('rollRangeElmt') as HTMLInputEleme
 const ctx = canvasElmt.getContext('2d');
 let width = canvasElmt.width;
 let height = canvasElmt.height;
+let heightSet = false;
+const resizeObserver = new ResizeObserver(
+  entries => {
+    if (!heightSet) {
+      //heightSet = true;
+      canvasElmt.width = width = entries[0].contentRect.width;
+      canvasElmt.height = height = entries[0].contentRect.height - 4;
+    }
+  }
+)
 
 const fov = 90;
 const far = 10;
@@ -22,12 +33,7 @@ const projMat = mat4.fromValues(
 
 
 function main() {
-  const camera = new Camera();
-
-  const scene: Object3D[] = [
-    new Cilinder()
-  ];
-
+  
   pitchRangeElmt.addEventListener('input', (ev: any) => {
     const pitch = ev.target.value;
     camera.rot[0] = pitch * Math.PI / 180;
@@ -39,6 +45,13 @@ function main() {
   canvasElmt.addEventListener('click', (ev) => {
     console.log(ev.offsetX, ev.offsetY);
   })
+  resizeObserver.observe(canvasContainerElmt);
+
+  const camera = new Camera();
+
+  const scene: Object3D[] = [
+    new Cilinder()
+  ];
 
   vec3.add(scene[0].pos, scene[0].pos, vec3.fromValues(0, 0, -5.5));
   scene[0].scale[1] = 4;
@@ -85,7 +98,7 @@ function main() {
         vec3.scale(p, p, 1 / p[3]);
 
         // scale to screen coordinates
-        vec3.scale(p, p, width);
+        vec3.scale(p, p, height);
         vec3.add(p, p, vec2.fromValues(width / 2, height / 2))
 
         verticies.push(p);
