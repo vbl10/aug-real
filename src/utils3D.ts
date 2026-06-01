@@ -83,3 +83,23 @@ export class Cilinder extends Object3D {
     super({indicies, verticies});
   }
 }
+
+export class Grid extends Object3D {
+  constructor(dimX: number, dimZ: number) {
+    const verticies: vec3[] = [];
+    const indicies: number[] = [];
+
+    for (let x = 0; x <= dimX; x++) {
+      verticies.push(vec3.fromValues(x - dimX / 2, 0, -dimZ / 2));
+      verticies.push(vec3.fromValues(x - dimX / 2, 0, dimZ / 2));
+      indicies.push(x * 2, x * 2 + 1);
+    }
+    for (let z = 0; z <= dimZ; z++) {
+      verticies.push(vec3.fromValues(-dimX / 2, 0, z - dimZ / 2));
+      verticies.push(vec3.fromValues(dimX / 2, 0, z - dimZ / 2));
+      indicies.push(z * 2 + (dimX + 1) * 2, z * 2 + 1 + (dimX + 1) * 2);
+    }
+
+    super({verticies, indicies});
+  }
+}

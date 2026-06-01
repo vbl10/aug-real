@@ -1,11 +1,15 @@
 import './style.css';
 import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import { Object3D, Cilinder, Camera } from './utils3D';
+import { Object3D, Cilinder, Camera, Grid } from './utils3D';
 
 const canvasContainerElmt = document.getElementById('canvasContainerElmt') as HTMLDivElement;
 const canvasElmt = document.getElementById('canvasElmt') as HTMLCanvasElement;
 const pitchRangeElmt = document.getElementById('pitchRangeElmt') as HTMLInputElement;
 const rollRangeElmt = document.getElementById('rollRangeElmt') as HTMLInputElement;
+const camHeightRangeElmt = document.getElementById('camHeightRangeElmt') as HTMLInputElement;
+const pitchDisplayElmt = document.getElementById('pitchDisplayElmt');
+const rollDisplayElmt = document.getElementById('pitchDisplayElmt');
+const heightDisplayElmt = document.getElementById('heightDisplayElmt');
 
 const ctx = canvasElmt.getContext('2d');
 let width = canvasElmt.width;
@@ -33,28 +37,36 @@ const projMat = mat4.fromValues(
 
 
 function main() {
-  
+  const camera = new Camera();
+  camera.pos[1] = 0;
+
+  const scene: Object3D[] = [
+    new Cilinder(),
+    new Grid(10, 10)
+  ];
+
   pitchRangeElmt.addEventListener('input', (ev: any) => {
     const pitch = ev.target.value;
     camera.rot[0] = pitch * Math.PI / 180;
+    if (pitchDisplayElmt) pitchDisplayElmt.innerText = pitch;
   });
   rollRangeElmt.addEventListener('input', (ev: any) => {
     const roll = ev.target.value;
     camera.rot[2] = roll * Math.PI / 180;
+    if (rollDisplayElmt) rollDisplayElmt.innerText = roll;
   });
   canvasElmt.addEventListener('click', (ev) => {
     console.log(ev.offsetX, ev.offsetY);
   })
+  camHeightRangeElmt.addEventListener('input', (ev: any) => {
+    camera.pos[1] = ev.target.value;
+    if (heightDisplayElmt) heightDisplayElmt.innerText = ev.target.value;
+  })
   resizeObserver.observe(canvasContainerElmt);
 
-  const camera = new Camera();
-
-  const scene: Object3D[] = [
-    new Cilinder()
-  ];
-
-  vec3.add(scene[0].pos, scene[0].pos, vec3.fromValues(0, 0, -5.5));
+  vec3.add(scene[0].pos, scene[0].pos, vec3.fromValues(0, 2, -5.5));
   scene[0].scale[1] = 4;
+  scene[1].pos[2] = -5.5;
 
   const draw = () => {
     if (!ctx) return;
@@ -98,7 +110,7 @@ function main() {
         vec3.scale(p, p, 1 / p[3]);
 
         // scale to screen coordinates
-        vec3.scale(p, p, height);
+        vec3.scale(p, p, -height);
         vec3.add(p, p, vec2.fromValues(width / 2, height / 2))
 
         verticies.push(p);
